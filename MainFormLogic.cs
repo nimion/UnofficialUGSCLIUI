@@ -63,35 +63,36 @@ namespace UnofficialUGSCLIUI
             return success;
         }
 
-        private void HandleOnOpenCreateNewProjectModal()
+        private async Task HandleOnOpenCreateNewProjectModal()
         {
-            NewProjectModalForm newProjectForm = new NewProjectModalForm();
-            DialogResult result = newProjectForm.ShowDialog();
-            if (result == DialogResult.OK)
+            try
             {
-                string projectID = newProjectForm.ProjectId;
-                string projectName = newProjectForm.ProjectName;
-                if (Directory.Exists(projectName))
+                NewProjectModalForm newProjectForm = new NewProjectModalForm();
+                DialogResult result = newProjectForm.ShowDialog();
+                if (result == DialogResult.OK)
                 {
-                    MessageBox.Show($"A project already exists with the name {projectName}", "Project Exists", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    try
+                    string projectID = newProjectForm.ProjectId;
+                    string projectName = newProjectForm.ProjectName;
+                    if (Directory.Exists(projectName))
+                    {
+                        MessageBox.Show($"A project already exists with the name {projectName}", "Project Exists", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
                     {
                         _projectData = new ProjectData(projectName, projectID);
                         var directoryInfo = Directory.CreateDirectory(PathHelper.GetProjectPath(_projectData));
                         File.WriteAllText(PathHelper.GetProjectDataPath(_projectData), JsonConvert.SerializeObject(_projectData));
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show($"{ex.Message}", "Error Creating Project", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        await SetProjectId();
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error Creating Project", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void HandleOnOpenLoadProjectModal()
+        private async Task HandleOnOpenLoadProjectModal()
         {
             try
             {
@@ -106,6 +107,7 @@ namespace UnofficialUGSCLIUI
                     string path = openFileDialog.FileName;
                     string jsonData = File.ReadAllText(path);
                     _projectData = JsonConvert.DeserializeObject<ProjectData>(jsonData);
+                    await SetProjectId();
                     _mainFormView.Text = string.Concat(APPLICATION_TITLE, $" ({_projectData.ProjectName} | {_projectData.ProjectId})");
                     _mainFormView.PopulateAuthProfileList(_projectData);
                     MessageBox.Show($"Project {_projectData.ProjectName} has been successfully loaded!", "Project Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -114,6 +116,19 @@ namespace UnofficialUGSCLIUI
             catch (Exception ex)
             {
                 MessageBox.Show($"{ex.Message}", "Error Loading Project", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task SetProjectId()
+        {
+            var response = await UGSCLIWrapper.SetProjectId(_programConfig.CLILocation, "b9d49470-eff5-4f03-ae2a-3c860953b272");
+            if (response.Error == CLIWrapperResponse.ErrorCode.Success)
+            {
+                MessageBox.Show(response.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show(response.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

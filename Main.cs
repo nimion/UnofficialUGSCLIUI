@@ -2,27 +2,28 @@ namespace UnofficialUGSCLIUI
 {
     public partial class frmUGSCLIUI : Form
     {
-        public event Action OnMenuItemNewProjectClicked;
-        public event Action OnMenuItemLoadProjectClicked;
-        public event Action<int> OnUseAuthProfileClicked;
+        public event Func<Task> OnMenuItemNewProjectClicked;
+        public event Func<Task> OnMenuItemLoadProjectClicked;
+        public event Func<Task, int> OnUseAuthProfileClicked;
         public event Action<int> OnEditAuthProfileClicked;
         public event Action<int> OnDeleteAuthProfileClicked;
         public event Action<string, string, string> OnCreateAuthProfileClicked;
         public event Action OnLocateCLILocation;
+        public event Action OnGetCLIVersion;
 
         public frmUGSCLIUI()
         {
             InitializeComponent();
         }
 
-        private void tsMenuItemNewProject_Click(object sender, EventArgs e)
+        private async void tsMenuItemNewProject_Click(object sender, EventArgs e)
         {
-            OnMenuItemNewProjectClicked?.Invoke();
+            await OnMenuItemNewProjectClicked?.Invoke();
         }
 
-        private void tsMenuItemLoadProject_Click(object sender, EventArgs e)
+        private async void tsMenuItemLoadProject_Click(object sender, EventArgs e)
         {
-            OnMenuItemLoadProjectClicked?.Invoke();
+            await OnMenuItemLoadProjectClicked?.Invoke();
         }
 
         private void tsMenuItemQuit_Click(object sender, EventArgs e)
@@ -55,6 +56,11 @@ namespace UnofficialUGSCLIUI
         private void setUGSCLIPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OnLocateCLILocation?.Invoke();
+        }
+
+        private void versionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OnGetCLIVersion?.Invoke();
         }
     }
 }
