@@ -4,10 +4,10 @@ namespace UnofficialUGSCLIUI
     {
         public event Func<Task> OnMenuItemNewProjectClicked;
         public event Func<Task> OnMenuItemLoadProjectClicked;
-        public event Func<Task, int> OnUseAuthProfileClicked;
+        public event Func<int, Task> OnUseAuthProfileClicked;
         public event Action<int> OnEditAuthProfileClicked;
         public event Action<int> OnDeleteAuthProfileClicked;
-        public event Action<string, string, string> OnCreateAuthProfileClicked;
+        public event Func<string, string, string, Task> OnCreateAuthProfileClicked;
         public event Action OnLocateCLILocation;
         public event Action OnGetCLIVersion;
 
@@ -43,9 +43,9 @@ namespace UnofficialUGSCLIUI
             }
         }
 
-        private void btnCreateAuthProfile_Click(object sender, EventArgs e)
+        private async void btnCreateAuthProfile_Click(object sender, EventArgs e)
         {
-            OnCreateAuthProfileClicked?.Invoke(txtAddAuthProfileFriendlyName.Text, txtAddAuthProfileAccountKeyId.Text, txtAddAuthProfileAccountSecretKey.Text);
+            await OnCreateAuthProfileClicked?.Invoke(txtAddAuthProfileFriendlyName.Text, txtAddAuthProfileAccountKeyId.Text, txtAddAuthProfileAccountSecretKey.Text);
         }
 
         private void frmUGSCLIUI_Load(object sender, EventArgs e)

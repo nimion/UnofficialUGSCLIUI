@@ -13,7 +13,7 @@
             _mainFormView.OnCreateAuthProfileClicked += HandleOnCreateAuthProfileClicked;
         }
 
-        private void HandleOnUseAuthClicked(int selectedEntryIndex)
+        private async Task HandleOnUseAuthClicked(int selectedEntryIndex)
         {
 
         }
@@ -27,7 +27,7 @@
         {
 
         }
-        private void HandleOnCreateAuthProfileClicked(string name, string key, string secret)
+        private async Task HandleOnCreateAuthProfileClicked(string name, string key, string secret)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -43,6 +43,9 @@
             {
                 MessageBox.Show("Account Secret is an invalid format.", "Account Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            //Todo: Ask if user wants to switch authorization when creating.
+            await UGSCLIWrapper.SetAuthorization(key, secret);
         }
     }
 }
