@@ -7,6 +7,8 @@ namespace UnofficialUGSCLIUI
         public event Action<int> OnUseAuthProfileClicked;
         public event Action<int> OnEditAuthProfileClicked;
         public event Action<int> OnDeleteAuthProfileClicked;
+        public event Action<string, string, string> OnCreateAuthProfileClicked;
+        public event Action OnLocateCLILocation;
 
         public frmUGSCLIUI()
         {
@@ -28,11 +30,6 @@ namespace UnofficialUGSCLIUI
             Application.Exit();
         }
 
-        private void frmUGSCLIUI_Load(object sender, EventArgs e)
-        {
-
-        }
-
         public void PopulateAuthProfileList(ProjectData projectData)
         {
             lstAuthProfiles.Items.Clear();
@@ -45,9 +42,19 @@ namespace UnofficialUGSCLIUI
             }
         }
 
-        private void groupBox2_Enter(object sender, EventArgs e)
+        private void btnCreateAuthProfile_Click(object sender, EventArgs e)
+        {
+            OnCreateAuthProfileClicked?.Invoke(txtAddAuthProfileFriendlyName.Text, txtAddAuthProfileAccountKeyId.Text, txtAddAuthProfileAccountSecretKey.Text);
+        }
+
+        private void frmUGSCLIUI_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void setUGSCLIPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OnLocateCLILocation?.Invoke();
         }
     }
 }

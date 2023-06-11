@@ -43,6 +43,17 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabPageEnvironment = new System.Windows.Forms.TabPage();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtActiveEnvironmentName = new System.Windows.Forms.TextBox();
+            this.txtActiveEnvironmentId = new System.Windows.Forms.TextBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.btnCreateEnvironment = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtAddEnvironmentName = new System.Windows.Forms.TextBox();
+            this.txtAddEnvironmentId = new System.Windows.Forms.TextBox();
             this.tabPageAuth = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblActiveAuthProfileFriendlyName = new System.Windows.Forms.Label();
@@ -50,13 +61,13 @@
             this.txtActiveAuthProfileFriendlyName = new System.Windows.Forms.TextBox();
             this.txtActiveAuthProfuleAccountKeyId = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.btnCreate = new System.Windows.Forms.Button();
+            this.btnCreateAuthProfile = new System.Windows.Forms.Button();
             this.lblAuthProfileFriendlyName = new System.Windows.Forms.Label();
             this.lblAccountKeyId = new System.Windows.Forms.Label();
-            this.txtAuthProfileFriendlyName = new System.Windows.Forms.TextBox();
-            this.txtAuthProfileAccountKeyId = new System.Windows.Forms.TextBox();
+            this.txtAddAuthProfileFriendlyName = new System.Windows.Forms.TextBox();
+            this.txtAddAuthProfileAccountKeyId = new System.Windows.Forms.TextBox();
             this.lblAccountSecretKey = new System.Windows.Forms.Label();
-            this.txtAuthProfileAccountSecretKey = new System.Windows.Forms.TextBox();
+            this.txtAddAuthProfileAccountSecretKey = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnEditAuthProfile = new System.Windows.Forms.Button();
@@ -66,6 +77,9 @@
             this.tabUGSCommands = new System.Windows.Forms.TabControl();
             this.menuStripMainForm.SuspendLayout();
             this.statusStripMainForm.SuspendLayout();
+            this.tabPageEnvironment.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.tabPageAuth.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -134,8 +148,9 @@
             // setUGSCLIPathToolStripMenuItem
             // 
             this.setUGSCLIPathToolStripMenuItem.Name = "setUGSCLIPathToolStripMenuItem";
-            this.setUGSCLIPathToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.setUGSCLIPathToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.setUGSCLIPathToolStripMenuItem.Text = "Set &UGS CLI Path";
+            this.setUGSCLIPathToolStripMenuItem.Click += new System.EventHandler(this.setUGSCLIPathToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -189,6 +204,7 @@
             // 
             // tabPageEnvironment
             // 
+            this.tabPageEnvironment.Controls.Add(this.groupBox4);
             this.tabPageEnvironment.Location = new System.Drawing.Point(4, 24);
             this.tabPageEnvironment.Name = "tabPageEnvironment";
             this.tabPageEnvironment.Padding = new System.Windows.Forms.Padding(3);
@@ -196,6 +212,114 @@
             this.tabPageEnvironment.TabIndex = 2;
             this.tabPageEnvironment.Text = "Environment Profiles";
             this.tabPageEnvironment.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label1);
+            this.groupBox4.Controls.Add(this.label2);
+            this.groupBox4.Controls.Add(this.txtActiveEnvironmentName);
+            this.groupBox4.Controls.Add(this.txtActiveEnvironmentId);
+            this.groupBox4.Controls.Add(this.groupBox5);
+            this.groupBox4.Location = new System.Drawing.Point(328, 3);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(461, 370);
+            this.groupBox4.TabIndex = 2;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Active Environment";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(15, 27);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(110, 15);
+            this.label1.TabIndex = 18;
+            this.label1.Text = "Environment Name";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 83);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(88, 15);
+            this.label2.TabIndex = 15;
+            this.label2.Text = "Environment Id";
+            // 
+            // txtActiveEnvironmentName
+            // 
+            this.txtActiveEnvironmentName.Enabled = false;
+            this.txtActiveEnvironmentName.Location = new System.Drawing.Point(15, 45);
+            this.txtActiveEnvironmentName.Name = "txtActiveEnvironmentName";
+            this.txtActiveEnvironmentName.Size = new System.Drawing.Size(440, 23);
+            this.txtActiveEnvironmentName.TabIndex = 17;
+            // 
+            // txtActiveEnvironmentId
+            // 
+            this.txtActiveEnvironmentId.Enabled = false;
+            this.txtActiveEnvironmentId.Location = new System.Drawing.Point(15, 101);
+            this.txtActiveEnvironmentId.Name = "txtActiveEnvironmentId";
+            this.txtActiveEnvironmentId.Size = new System.Drawing.Size(440, 23);
+            this.txtActiveEnvironmentId.TabIndex = 16;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.btnCreateEnvironment);
+            this.groupBox5.Controls.Add(this.label3);
+            this.groupBox5.Controls.Add(this.label4);
+            this.groupBox5.Controls.Add(this.txtAddEnvironmentName);
+            this.groupBox5.Controls.Add(this.txtAddEnvironmentId);
+            this.groupBox5.Location = new System.Drawing.Point(-1, 147);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(462, 223);
+            this.groupBox5.TabIndex = 14;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "Add Environment";
+            // 
+            // btnCreateEnvironment
+            // 
+            this.btnCreateEnvironment.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnCreateEnvironment.Location = new System.Drawing.Point(347, 189);
+            this.btnCreateEnvironment.Name = "btnCreateEnvironment";
+            this.btnCreateEnvironment.Size = new System.Drawing.Size(109, 28);
+            this.btnCreateEnvironment.TabIndex = 9;
+            this.btnCreateEnvironment.Text = "&Create";
+            this.btnCreateEnvironment.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 30);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(110, 15);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "Environment Name";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 86);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(88, 15);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Environment Id";
+            // 
+            // txtAddEnvironmentName
+            // 
+            this.txtAddEnvironmentName.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.txtAddEnvironmentName.Location = new System.Drawing.Point(16, 48);
+            this.txtAddEnvironmentName.Name = "txtAddEnvironmentName";
+            this.txtAddEnvironmentName.Size = new System.Drawing.Size(441, 23);
+            this.txtAddEnvironmentName.TabIndex = 12;
+            // 
+            // txtAddEnvironmentId
+            // 
+            this.txtAddEnvironmentId.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.txtAddEnvironmentId.Location = new System.Drawing.Point(16, 104);
+            this.txtAddEnvironmentId.Name = "txtAddEnvironmentId";
+            this.txtAddEnvironmentId.Size = new System.Drawing.Size(440, 23);
+            this.txtAddEnvironmentId.TabIndex = 8;
             // 
             // tabPageAuth
             // 
@@ -223,7 +347,6 @@
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Active Authentication Profile";
-            this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
             // lblActiveAuthProfileFriendlyName
             // 
@@ -261,13 +384,13 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.btnCreate);
+            this.groupBox3.Controls.Add(this.btnCreateAuthProfile);
             this.groupBox3.Controls.Add(this.lblAuthProfileFriendlyName);
             this.groupBox3.Controls.Add(this.lblAccountKeyId);
-            this.groupBox3.Controls.Add(this.txtAuthProfileFriendlyName);
-            this.groupBox3.Controls.Add(this.txtAuthProfileAccountKeyId);
+            this.groupBox3.Controls.Add(this.txtAddAuthProfileFriendlyName);
+            this.groupBox3.Controls.Add(this.txtAddAuthProfileAccountKeyId);
             this.groupBox3.Controls.Add(this.lblAccountSecretKey);
-            this.groupBox3.Controls.Add(this.txtAuthProfileAccountSecretKey);
+            this.groupBox3.Controls.Add(this.txtAddAuthProfileAccountSecretKey);
             this.groupBox3.Location = new System.Drawing.Point(-1, 147);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(462, 223);
@@ -275,15 +398,16 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Add Profile";
             // 
-            // btnCreate
+            // btnCreateAuthProfile
             // 
-            this.btnCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCreate.Location = new System.Drawing.Point(347, 185);
-            this.btnCreate.Name = "btnCreate";
-            this.btnCreate.Size = new System.Drawing.Size(109, 28);
-            this.btnCreate.TabIndex = 9;
-            this.btnCreate.Text = "&Create";
-            this.btnCreate.UseVisualStyleBackColor = true;
+            this.btnCreateAuthProfile.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.btnCreateAuthProfile.Location = new System.Drawing.Point(347, 185);
+            this.btnCreateAuthProfile.Name = "btnCreateAuthProfile";
+            this.btnCreateAuthProfile.Size = new System.Drawing.Size(109, 28);
+            this.btnCreateAuthProfile.TabIndex = 9;
+            this.btnCreateAuthProfile.Text = "&Create";
+            this.btnCreateAuthProfile.UseVisualStyleBackColor = true;
+            this.btnCreateAuthProfile.Click += new System.EventHandler(this.btnCreateAuthProfile_Click);
             // 
             // lblAuthProfileFriendlyName
             // 
@@ -305,21 +429,21 @@
             this.lblAccountKeyId.TabIndex = 7;
             this.lblAccountKeyId.Text = "Account Key Id";
             // 
-            // txtAuthProfileFriendlyName
+            // txtAddAuthProfileFriendlyName
             // 
-            this.txtAuthProfileFriendlyName.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.txtAuthProfileFriendlyName.Location = new System.Drawing.Point(16, 44);
-            this.txtAuthProfileFriendlyName.Name = "txtAuthProfileFriendlyName";
-            this.txtAuthProfileFriendlyName.Size = new System.Drawing.Size(441, 23);
-            this.txtAuthProfileFriendlyName.TabIndex = 12;
+            this.txtAddAuthProfileFriendlyName.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.txtAddAuthProfileFriendlyName.Location = new System.Drawing.Point(16, 44);
+            this.txtAddAuthProfileFriendlyName.Name = "txtAddAuthProfileFriendlyName";
+            this.txtAddAuthProfileFriendlyName.Size = new System.Drawing.Size(441, 23);
+            this.txtAddAuthProfileFriendlyName.TabIndex = 12;
             // 
-            // txtAuthProfileAccountKeyId
+            // txtAddAuthProfileAccountKeyId
             // 
-            this.txtAuthProfileAccountKeyId.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.txtAuthProfileAccountKeyId.Location = new System.Drawing.Point(16, 100);
-            this.txtAuthProfileAccountKeyId.Name = "txtAuthProfileAccountKeyId";
-            this.txtAuthProfileAccountKeyId.Size = new System.Drawing.Size(440, 23);
-            this.txtAuthProfileAccountKeyId.TabIndex = 8;
+            this.txtAddAuthProfileAccountKeyId.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.txtAddAuthProfileAccountKeyId.Location = new System.Drawing.Point(16, 100);
+            this.txtAddAuthProfileAccountKeyId.Name = "txtAddAuthProfileAccountKeyId";
+            this.txtAddAuthProfileAccountKeyId.Size = new System.Drawing.Size(440, 23);
+            this.txtAddAuthProfileAccountKeyId.TabIndex = 8;
             // 
             // lblAccountSecretKey
             // 
@@ -331,14 +455,14 @@
             this.lblAccountSecretKey.TabIndex = 11;
             this.lblAccountSecretKey.Text = "Account Secret Key";
             // 
-            // txtAuthProfileAccountSecretKey
+            // txtAddAuthProfileAccountSecretKey
             // 
-            this.txtAuthProfileAccountSecretKey.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.txtAuthProfileAccountSecretKey.Location = new System.Drawing.Point(16, 156);
-            this.txtAuthProfileAccountSecretKey.Name = "txtAuthProfileAccountSecretKey";
-            this.txtAuthProfileAccountSecretKey.Size = new System.Drawing.Size(440, 23);
-            this.txtAuthProfileAccountSecretKey.TabIndex = 10;
-            this.txtAuthProfileAccountSecretKey.UseSystemPasswordChar = true;
+            this.txtAddAuthProfileAccountSecretKey.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.txtAddAuthProfileAccountSecretKey.Location = new System.Drawing.Point(16, 156);
+            this.txtAddAuthProfileAccountSecretKey.Name = "txtAddAuthProfileAccountSecretKey";
+            this.txtAddAuthProfileAccountSecretKey.Size = new System.Drawing.Size(440, 23);
+            this.txtAddAuthProfileAccountSecretKey.TabIndex = 10;
+            this.txtAddAuthProfileAccountSecretKey.UseSystemPasswordChar = true;
             // 
             // groupBox1
             // 
@@ -370,7 +494,7 @@
             this.btnEditAuthProfile.Name = "btnEditAuthProfile";
             this.btnEditAuthProfile.Size = new System.Drawing.Size(100, 32);
             this.btnEditAuthProfile.TabIndex = 3;
-            this.btnEditAuthProfile.Text = "Edit Profile";
+            this.btnEditAuthProfile.Text = "&Edit Profile";
             this.btnEditAuthProfile.UseVisualStyleBackColor = true;
             // 
             // btnDeleteAuthProfile
@@ -380,7 +504,7 @@
             this.btnDeleteAuthProfile.Name = "btnDeleteAuthProfile";
             this.btnDeleteAuthProfile.Size = new System.Drawing.Size(100, 32);
             this.btnDeleteAuthProfile.TabIndex = 2;
-            this.btnDeleteAuthProfile.Text = "Delete Auth";
+            this.btnDeleteAuthProfile.Text = "&Delete Profile";
             this.btnDeleteAuthProfile.UseVisualStyleBackColor = true;
             // 
             // btnUseAuthProfile
@@ -390,7 +514,7 @@
             this.btnUseAuthProfile.Name = "btnUseAuthProfile";
             this.btnUseAuthProfile.Size = new System.Drawing.Size(100, 32);
             this.btnUseAuthProfile.TabIndex = 1;
-            this.btnUseAuthProfile.Text = "Use Profile";
+            this.btnUseAuthProfile.Text = "&Use Profile";
             this.btnUseAuthProfile.UseVisualStyleBackColor = true;
             // 
             // lstAuthProfiles
@@ -434,6 +558,11 @@
             this.menuStripMainForm.PerformLayout();
             this.statusStripMainForm.ResumeLayout(false);
             this.statusStripMainForm.PerformLayout();
+            this.tabPageEnvironment.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.tabPageAuth.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
@@ -474,16 +603,27 @@
         private Panel panel1;
         private Button btnEditAuthProfile;
         private Label lblAuthProfileFriendlyName;
-        private TextBox txtAuthProfileFriendlyName;
+        private TextBox txtAddAuthProfileFriendlyName;
         private Label lblAccountSecretKey;
-        private TextBox txtAuthProfileAccountSecretKey;
-        private Button btnCreate;
-        private TextBox txtAuthProfileAccountKeyId;
+        private TextBox txtAddAuthProfileAccountSecretKey;
+        private Button btnCreateAuthProfile;
+        private TextBox txtAddAuthProfileAccountKeyId;
         private Label lblAccountKeyId;
         private Label lblActiveAuthProfileFriendlyName;
         private Label lblActiveAuthProfileAccountKeyId;
         private TextBox txtActiveAuthProfileFriendlyName;
         private TextBox txtActiveAuthProfuleAccountKeyId;
         private GroupBox groupBox3;
+        private GroupBox groupBox4;
+        private Label label1;
+        private Label label2;
+        private TextBox txtActiveEnvironmentName;
+        private TextBox txtActiveEnvironmentId;
+        private GroupBox groupBox5;
+        private Button btnCreateEnvironment;
+        private Label label3;
+        private Label label4;
+        private TextBox txtAddEnvironmentName;
+        private TextBox txtAddEnvironmentId;
     }
 }
