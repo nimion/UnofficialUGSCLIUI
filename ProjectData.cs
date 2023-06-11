@@ -28,7 +28,12 @@ namespace UnofficialUGSCLIUI
             ProjectName = projectName;
             ProjectId = projectId;
             _projectEnvironments = projectEnvironments;
+            if (_projectEnvironments == null)
+                _projectEnvironments = new List<ProjectEnvironment>();
+
             _projectServiceAccounts = projectServiceAccounts;
+            if (_projectServiceAccounts == null)
+                _projectServiceAccounts = new List<ProjectServiceAccount>();
         }
 
         public ProjectData(string projectName, string projectId)

@@ -7,7 +7,6 @@ namespace UnofficialUGSCLIUI
         private const string APPLICATION_TITLE = "Unofficial Unity Gaming Service CLI UI";
         private frmUGSCLIUI _mainFormView = default;
         private ProjectData _projectData = null;
-        private AuthProfilePanelLogic _authProfilePanelLogic = null;
         private ProgramConfig _programConfig = null;
 
         public MainFormLogic(frmUGSCLIUI mainFormView)
@@ -16,7 +15,10 @@ namespace UnofficialUGSCLIUI
             _mainFormView.OnMenuItemNewProjectClicked += HandleOnOpenCreateNewProjectModal;
             _mainFormView.OnMenuItemLoadProjectClicked += HandleOnOpenLoadProjectModal;
             _mainFormView.OnLocateCLILocation += HandleOnLocateCLILocation;
-            _authProfilePanelLogic = new AuthProfilePanelLogic(mainFormView);
+            _mainFormView.OnUseAuthProfileClicked += HandleOnUseAuthClicked;
+            _mainFormView.OnEditAuthProfileClicked += HandleOnEditAuthProfileClicked;
+            _mainFormView.OnDeleteAuthProfileClicked += HandleOnDeleteAuthProfileClicked;
+            _mainFormView.OnCreateAuthProfileClicked += HandleOnCreateAuthProfileClicked;
             bool success = CreateOrGetConfig();
             if (success)
                 Application.Run(mainFormView);
@@ -80,9 +82,9 @@ namespace UnofficialUGSCLIUI
                     else
                     {
                         _projectData = new ProjectData(projectName, projectID);
-                        var directoryInfo = Directory.CreateDirectory(PathHelper.GetProjectPath(_projectData));
                         File.WriteAllText(PathHelper.GetProjectDataPath(_projectData), JsonConvert.SerializeObject(_projectData));
                         await SetProjectId();
+                        _mainFormView.Text = string.Concat(APPLICATION_TITLE, $" ({_projectData.ProjectName} | {_projectData.ProjectId})");
                     }
                 }
             }
@@ -153,6 +155,63 @@ namespace UnofficialUGSCLIUI
             catch (Exception ex)
             {
                 MessageBox.Show($"{ex.Message}", "Error Locating CLI", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task HandleOnUseAuthClicked(int selectedEntryIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleOnEditAuthProfileClicked(int selectedEntryIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleOnDeleteAuthProfileClicked(int selectedEntryIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task HandleOnCreateAuthProfileClicked(string name, string key, string secret)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(name))
+                {
+                    MessageBox.Show("Friendly Name cannot be empty.", "Name Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(key) || UserInputValidators.IsValidId(key) == false)
+                {
+                    MessageBox.Show("Account Key is an invalid format.", "Account Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(secret) || secret.Length != 32)
+                {
+                    MessageBox.Show("Account Secret is an invalid format.", "Account Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                ProjectServiceAccount serviceAccount = new ProjectServiceAccount(name, key, secret);
+                File.WriteAllText(PathHelper.GetProjectAuthSecretPath(_projectData, name), secret);
+                File.WriteAllText(PathHelper.GetProjectDataPath(_projectData), JsonConvert.SerializeObject(_projectData));
+
+                _projectData.AddProjectServiceAccount(serviceAccount);
+                _mainFormView.PopulateAuthProfileList(_projectData);
+
+                var result = MessageBox.Show($"Auth Profile Created! Login as {name}({key})?", "Auth Profile Created", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    string path = PathHelper.GetProjectAuthSecretPath(_projectData, key);
+                    await UGSCLIWrapper.SetAuthorization(_programConfig.CLILocation, key, path);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

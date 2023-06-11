@@ -1,4 +1,6 @@
-﻿namespace UnofficialUGSCLIUI
+﻿using System.Windows.Forms;
+
+namespace UnofficialUGSCLIUI
 {
     public static class PathHelper
     {
@@ -18,6 +20,11 @@
         public static string GetProjectPath(ProjectData projectData)
         {
             return Path.Combine(PROJECT_ROOT_DIRECTORY, projectData.ProjectName);
+        }
+
+        public static string GetProjectAuthSecretPath(ProjectData projectData, string authKey)
+        {
+            return Path.Combine(PathHelper.GetProjectPath(projectData), $"{authKey}.txt");
         }
 
         public static string GetProjectDataPath(ProjectData projectData)
