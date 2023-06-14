@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 
 namespace UnofficialUGSCLIUI
 {
@@ -28,24 +29,130 @@ namespace UnofficialUGSCLIUI
             }
         }
 
-        public static async Task<CLIWrapperResponse> SetAuthorization(string cliPath, string serviceKey, string secretKeyPath)
+        public static async Task<CLIWrapperResponse> Logout(string cliPath)
         {
             try
             {
-                string output = await RunProcess(cliPath, $"ugs login --service-key-id \"{serviceKey}\" --secret-key-stdin < \"{secretKeyPath}\"");
-                if (output.Contains("cannot find"))
+                ProcessStartInfo startInfo = new()
                 {
-                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.NotFound, "Secret key file not found.");
-                }
+                    FileName = cliPath,
+                    Arguments = "logout",
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                };
 
-                if(output.Contains("Account key saved"))
+                var proc = Process.Start(startInfo);
+                string output = proc.StandardOutput.ReadToEnd();
+                await proc.WaitForExitAsync();
+                return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Success, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, ex.Message);
+            }
+        }
+
+        public static async Task<CLIWrapperResponse> SetActiveEnvironment(string cliPath, string name)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new()
                 {
-                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Success, $"Logged in as {serviceKey} successfully!");
+                    FileName = cliPath,
+                    Arguments = $"config set environment-name {name}",
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                };
+
+                var proc = Process.Start(startInfo);
+                string output = proc.StandardOutput.ReadToEnd();
+                await proc.WaitForExitAsync();
+
+                if (output.Contains("has been set"))
+                {
+                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Success, "Environment has been set!");
                 }
                 else
                 {
                     return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, output);
                 }
+
+            }
+            catch (Exception ex)
+            {
+                return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, ex.Message);
+            }
+        }
+
+        public static async Task<CLIWrapperResponse> SetAuthorization(string cliPath)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new()
+                {
+                    FileName = cliPath,
+                    Arguments = "login",
+                    CreateNoWindow = false,
+                };
+
+                var proc = Process.Start(startInfo);
+                await proc.WaitForExitAsync();
+
+                ProcessStartInfo startInfo2 = new()
+                {
+                    FileName = cliPath,
+                    Arguments = "status",
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                };
+
+                var proc2 = Process.Start(startInfo2);
+                string output = proc2.StandardOutput.ReadToEnd();
+
+                if (output.Contains("Using Service"))
+                {
+                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Success, "Successfully authenticated!");
+                }
+                else if (output.Contains("No Service"))
+                {
+                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, "Login failed!");
+                }
+                else
+                {
+                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, output);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, ex.Message);
+            }
+        }
+
+        public static async Task<CLIWrapperResponse> DeployModule(string cliPath, string modulePath)
+        {
+            try
+            {
+                ProcessStartInfo startInfo = new()
+                {
+                    FileName = cliPath,
+                    Arguments = $"deploy \"{modulePath}\"",
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                };
+
+                var proc = Process.Start(startInfo);
+                string output = proc.StandardOutput.ReadToEnd();
+                await proc.WaitForExitAsync();
+
+                if (output.Contains("Updated:") && output.Contains("Deployed:"))
+                {
+                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Success, "Successfully Deployed!");
+                }
+                else
+                {
+                    return new CLIWrapperResponse(CLIWrapperResponse.ErrorCode.Undefined, output);
+                }
+
             }
             catch (Exception ex)
             {
@@ -67,6 +174,7 @@ namespace UnofficialUGSCLIUI
 
             var proc = Process.Start(startInfo);
             ArgumentNullException.ThrowIfNull(proc);
+
             string output = proc.StandardOutput.ReadToEnd();
             await proc.WaitForExitAsync();
             Cursor.Current = Cursors.Default;

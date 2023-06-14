@@ -6,47 +6,35 @@ namespace UnofficialUGSCLIUI
     {
         public string ProjectName { get; }
         public string ProjectId { get; }
-        public IReadOnlyList<ProjectEnvironment> Environments => _projectEnvironments;
-        public IReadOnlyList<ProjectServiceAccount> ServiceAccounts => _projectServiceAccounts;
         [JsonIgnore]
-        public bool HasServiceAccounts => _projectServiceAccounts != null && _projectServiceAccounts.Count > 0;
+        public IReadOnlyList<ProjectEnvironment> Environments => _projectEnvironments;
         [JsonIgnore]
         public ProjectEnvironment ActiveEnvironment => _activeEnvironment;
         [JsonIgnore]
-        public ProjectServiceAccount ActiveServiceAccount => _activeServiceAccount;
-
-        private List<ProjectEnvironment> _projectEnvironments { get; }
-        private List<ProjectServiceAccount> _projectServiceAccounts { get; }
-        [JsonIgnore]
         private ProjectEnvironment _activeEnvironment = null;
-        [JsonIgnore]
-        private ProjectServiceAccount _activeServiceAccount = null;
+        [JsonProperty]
+        private List<ProjectEnvironment> _projectEnvironments { get; }
 
         [JsonConstructor]
-        public ProjectData(string projectName, string projectId, List<ProjectEnvironment> projectEnvironments, List<ProjectServiceAccount> projectServiceAccounts)
+        public ProjectData(string projectName, string projectId, List<ProjectEnvironment> projectEnvironments)
         {
             ProjectName = projectName;
             ProjectId = projectId;
             _projectEnvironments = projectEnvironments;
             if (_projectEnvironments == null)
                 _projectEnvironments = new List<ProjectEnvironment>();
-
-            _projectServiceAccounts = projectServiceAccounts;
-            if (_projectServiceAccounts == null)
-                _projectServiceAccounts = new List<ProjectServiceAccount>();
         }
 
         public ProjectData(string projectName, string projectId)
         {
-            ProjectName = projectName; 
+            ProjectName = projectName;
             ProjectId = projectId;
             _projectEnvironments = new List<ProjectEnvironment>();
-            _projectServiceAccounts = new List<ProjectServiceAccount>();
         }
 
         public AddProjectSubDataResult<ProjectEnvironment> AddProjectEnvironment(ProjectEnvironment data)
         {
-            if(_projectEnvironments.FirstOrDefault(p=>p.EnvironmentId == data.EnvironmentId) != default)
+            if (_projectEnvironments.FirstOrDefault(p => p.EnvironmentId == data.EnvironmentId) != default)
             {
                 return new AddProjectSubDataResult<ProjectEnvironment>($"Environment Id {data.EnvironmentId} ({data.EnvironmentName}) already exsists.");
             }
@@ -55,15 +43,9 @@ namespace UnofficialUGSCLIUI
             return new AddProjectSubDataResult<ProjectEnvironment>(data);
         }
 
-        public AddProjectSubDataResult<ProjectServiceAccount> AddProjectServiceAccount(ProjectServiceAccount data)
+        public void RemoveProjectEnvironment(int index)
         {
-            if (_projectServiceAccounts.FirstOrDefault(p => p.AccountKeyId == data.AccountKeyId) != default)
-            {
-                return new AddProjectSubDataResult<ProjectServiceAccount>($"Service Account Id {data.AccountKeyId} already exsists.");
-            }
-
-            _projectServiceAccounts.Add(data);
-            return new AddProjectSubDataResult<ProjectServiceAccount>(data);
+            _projectEnvironments.RemoveAt(index);
         }
     }
 }

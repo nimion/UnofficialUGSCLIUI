@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.IO.Compression;
 
 namespace UnofficialUGSCLIUI
 {
@@ -15,10 +16,12 @@ namespace UnofficialUGSCLIUI
             _mainFormView.OnMenuItemNewProjectClicked += HandleOnOpenCreateNewProjectModal;
             _mainFormView.OnMenuItemLoadProjectClicked += HandleOnOpenLoadProjectModal;
             _mainFormView.OnLocateCLILocation += HandleOnLocateCLILocation;
-            _mainFormView.OnUseAuthProfileClicked += HandleOnUseAuthClicked;
-            _mainFormView.OnEditAuthProfileClicked += HandleOnEditAuthProfileClicked;
-            _mainFormView.OnDeleteAuthProfileClicked += HandleOnDeleteAuthProfileClicked;
-            _mainFormView.OnCreateAuthProfileClicked += HandleOnCreateAuthProfileClicked;
+            _mainFormView.OnLoginClicked += HandleOnLoginClicked;
+            _mainFormView.OnLogoutClicked += HandleOnClickLogout;
+            _mainFormView.OnUseEnvironmentProfileClicked += HandleOnUseEnvironmentProfileClicked;
+            _mainFormView.OnDeleteEnvironmentProfileClicked += HandleOnDeleteEnvironmentProfileClicked;
+            _mainFormView.OnCreateEnvironmentProfileClicked += HandleOnOnCreateEnvironmentProfileClicked;
+            _mainFormView.OnDeployClicked += HandleOnDeployClicked;
             bool success = CreateOrGetConfig();
             if (success)
                 Application.Run(mainFormView);
@@ -82,9 +85,14 @@ namespace UnofficialUGSCLIUI
                     else
                     {
                         _projectData = new ProjectData(projectName, projectID);
+                        FileInfo fileInfo = new FileInfo(PathHelper.GetProjectDataPath(_projectData));
+                        if (!fileInfo.Directory.Exists)
+                            fileInfo.Directory.Create();
+
                         File.WriteAllText(PathHelper.GetProjectDataPath(_projectData), JsonConvert.SerializeObject(_projectData));
-                        await SetProjectId();
+                        await SetProjectId(_projectData.ProjectId);
                         _mainFormView.Text = string.Concat(APPLICATION_TITLE, $" ({_projectData.ProjectName} | {_projectData.ProjectId})");
+                        _mainFormView.ToggleTabPaneVisibility(true);
                     }
                 }
             }
@@ -109,9 +117,10 @@ namespace UnofficialUGSCLIUI
                     string path = openFileDialog.FileName;
                     string jsonData = File.ReadAllText(path);
                     _projectData = JsonConvert.DeserializeObject<ProjectData>(jsonData);
-                    await SetProjectId();
+                    await SetProjectId(_projectData.ProjectId);
                     _mainFormView.Text = string.Concat(APPLICATION_TITLE, $" ({_projectData.ProjectName} | {_projectData.ProjectId})");
-                    _mainFormView.PopulateAuthProfileList(_projectData);
+                    _mainFormView.PopulateEnvironmentProfileList(_projectData);
+                    _mainFormView.ToggleTabPaneVisibility(true);
                     MessageBox.Show($"Project {_projectData.ProjectName} has been successfully loaded!", "Project Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -121,9 +130,9 @@ namespace UnofficialUGSCLIUI
             }
         }
 
-        private async Task SetProjectId()
+        private async Task SetProjectId(string projectId)
         {
-            var response = await UGSCLIWrapper.SetProjectId(_programConfig.CLILocation, "b9d49470-eff5-4f03-ae2a-3c860953b272");
+            var response = await UGSCLIWrapper.SetProjectId(_programConfig.CLILocation, projectId);
             if (response.Error == CLIWrapperResponse.ErrorCode.Success)
             {
                 MessageBox.Show(response.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -158,55 +167,150 @@ namespace UnofficialUGSCLIUI
             }
         }
 
-        private async Task HandleOnUseAuthClicked(int selectedEntryIndex)
+        private async Task HandleOnClickLogout()
         {
-            throw new NotImplementedException();
+            try
+            {
+                await UGSCLIWrapper.Logout(_programConfig.CLILocation);
+                _mainFormView.ToggleIsAuthenticate(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error Logging Out", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void HandleOnEditAuthProfileClicked(int selectedEntryIndex)
+        private async Task HandleOnLoginClicked()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await UGSCLIWrapper.SetAuthorization(_programConfig.CLILocation);
+                if (response.Error == CLIWrapperResponse.ErrorCode.Success)
+                {
+                    _mainFormView.ToggleIsAuthenticate(true);
+                    MessageBox.Show(response.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(response.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error Logging In", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void HandleOnDeleteAuthProfileClicked(int selectedEntryIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        private async Task HandleOnCreateAuthProfileClicked(string name, string key, string secret)
+        private async Task HandleOnOnCreateEnvironmentProfileClicked(string name, string id)
         {
             try
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    MessageBox.Show("Friendly Name cannot be empty.", "Name Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Environment name is an invalid format.", "Environment Name Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                if (string.IsNullOrEmpty(key) || UserInputValidators.IsValidId(key) == false)
+                if (string.IsNullOrEmpty(id) || UserInputValidators.IsValidId(id) == false)
                 {
-                    MessageBox.Show("Account Key is an invalid format.", "Account Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Environment Id is an invalid format.", "Environment Id Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                if (string.IsNullOrEmpty(secret) || secret.Length != 32)
-                {
-                    MessageBox.Show("Account Secret is an invalid format.", "Account Key Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                ProjectServiceAccount serviceAccount = new ProjectServiceAccount(name, key, secret);
-                File.WriteAllText(PathHelper.GetProjectAuthSecretPath(_projectData, name), secret);
+                ProjectEnvironment environment = new ProjectEnvironment(name, id);
+                _projectData.AddProjectEnvironment(environment);
                 File.WriteAllText(PathHelper.GetProjectDataPath(_projectData), JsonConvert.SerializeObject(_projectData));
+                _mainFormView.PopulateEnvironmentProfileList(_projectData);
 
-                _projectData.AddProjectServiceAccount(serviceAccount);
-                _mainFormView.PopulateAuthProfileList(_projectData);
-
-                var result = MessageBox.Show($"Auth Profile Created! Login as {name}({key})?", "Auth Profile Created", MessageBoxButtons.YesNo);
+                var result = MessageBox.Show($"Environment Profile Created! Set {name}({id}) as the active environment?", "Environment Profile Created", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    string path = PathHelper.GetProjectAuthSecretPath(_projectData, key);
-                    await UGSCLIWrapper.SetAuthorization(_programConfig.CLILocation, key, path);
+                    var response = await UGSCLIWrapper.SetActiveEnvironment(_programConfig.CLILocation, name);
+                    if (response.Error == CLIWrapperResponse.ErrorCode.Success)
+                    {
+                        MessageBox.Show(response.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(response.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task HandleOnUseEnvironmentProfileClicked(int index)
+        {
+            try
+            {
+                var environment = _projectData.Environments[index];
+                var response = await UGSCLIWrapper.SetActiveEnvironment(_programConfig.CLILocation, environment.EnvironmentName);
+                if (response.Error == CLIWrapperResponse.ErrorCode.Success)
+                {
+                    MessageBox.Show(response.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show(response.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void HandleOnDeleteEnvironmentProfileClicked(int index)
+        {
+            try
+            {
+                _projectData.RemoveProjectEnvironment(index);
+                _mainFormView.PopulateEnvironmentProfileList(_projectData);
+                File.WriteAllText(PathHelper.GetProjectDataPath(_projectData), JsonConvert.SerializeObject(_projectData));
+                MessageBox.Show("Environment Removed.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task HandleOnDeployClicked()
+        {
+            try
+            {
+                FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                folderBrowserDialog.InitialDirectory = PathHelper.GetInitialDirectory();
+                DialogResult result = folderBrowserDialog.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    string zipDirectory = folderBrowserDialog.SelectedPath;
+                    DirectoryInfo directoryToZip = new DirectoryInfo(zipDirectory);
+                    DirectoryInfo destinationDirectory = new DirectoryInfo(Path.Combine(directoryToZip.Parent.FullName, "Deployment"));
+                    
+                    if(destinationDirectory.Exists ==false)
+                        destinationDirectory.Create();
+
+                    FileInfo zipFile = new FileInfo(Path.Combine(destinationDirectory.FullName,"zipTest.ccm"));
+                    if (zipFile.Exists)
+                    {
+                        zipFile.Delete();
+                    }
+
+                    ZipFile.CreateFromDirectory(directoryToZip.FullName, zipFile.FullName);
+
+                    var response = await UGSCLIWrapper.DeployModule(_programConfig.CLILocation, zipFile.FullName);
+                    if (response.Error == CLIWrapperResponse.ErrorCode.Success)
+                    {
+                        MessageBox.Show(response.Message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(response.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             catch (Exception ex)

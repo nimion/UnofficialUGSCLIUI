@@ -2,12 +2,12 @@
 {
     public class ProjectEnvironment
     {
-        public string EnvironmentId { get; } = string.Empty;
         public string EnvironmentName { get; } = string.Empty;
-        public ProjectEnvironment(string environmentId, string environmentName)
+        public string EnvironmentId { get; } = string.Empty;
+        public ProjectEnvironment(string environmentName, string environmentId)
         {
-            EnvironmentId = environmentId;
             EnvironmentName = environmentName;
+            EnvironmentId = environmentId;
         }
     }
 }
