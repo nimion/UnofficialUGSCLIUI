@@ -278,10 +278,16 @@ namespace UnofficialUGSCLIUI
             }
         }
 
-        private async Task HandleOnDeployClicked()
+        private async Task HandleOnDeployClicked(string moduleName)
         {
             try
             {
+                if(string.IsNullOrEmpty(moduleName))
+                {
+                    MessageBox.Show("Please enter a module name.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
                 FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
                 folderBrowserDialog.InitialDirectory = PathHelper.GetInitialDirectory();
                 DialogResult result = folderBrowserDialog.ShowDialog();
@@ -294,7 +300,7 @@ namespace UnofficialUGSCLIUI
                     if(destinationDirectory.Exists ==false)
                         destinationDirectory.Create();
 
-                    FileInfo zipFile = new FileInfo(Path.Combine(destinationDirectory.FullName,"zipTest.ccm"));
+                    FileInfo zipFile = new FileInfo(Path.Combine(destinationDirectory.FullName,$"{moduleName}.ccm"));
                     if (zipFile.Exists)
                     {
                         zipFile.Delete();

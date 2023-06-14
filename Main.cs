@@ -11,7 +11,7 @@ namespace UnofficialUGSCLIUI
         public event Func<string, string, Task> OnCreateEnvironmentProfileClicked;
         public event Action OnLocateCLILocation;
         public event Action OnGetCLIVersion;
-        public event Func<Task> OnDeployClicked;
+        public event Func<string, Task> OnDeployClicked;
 
         public frmUGSCLIUI()
         {
@@ -123,7 +123,7 @@ namespace UnofficialUGSCLIUI
 
         private async void btnDeploy_Click(object sender, EventArgs e)
         {
-            await OnDeployClicked?.Invoke();
+            await OnDeployClicked?.Invoke(txtModuleName.Text);
         }
     }
 }

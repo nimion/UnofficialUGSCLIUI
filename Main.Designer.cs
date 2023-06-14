@@ -42,7 +42,6 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.progDeploying = new System.Windows.Forms.ProgressBar();
             this.btnDeploy = new System.Windows.Forms.Button();
             this.tabPageEnvironment = new System.Windows.Forms.TabPage();
             this.btnEnvironmentDelete = new System.Windows.Forms.Button();
@@ -64,6 +63,8 @@
             this.btnLogin = new System.Windows.Forms.Button();
             this.lblIsAuthenticated = new System.Windows.Forms.Label();
             this.tabUGSCommands = new System.Windows.Forms.TabControl();
+            this.lblFileName = new System.Windows.Forms.Label();
+            this.txtModuleName = new System.Windows.Forms.TextBox();
             this.menuStripMainForm.SuspendLayout();
             this.statusStripMainForm.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -184,7 +185,8 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.progDeploying);
+            this.tabPage1.Controls.Add(this.txtModuleName);
+            this.tabPage1.Controls.Add(this.lblFileName);
             this.tabPage1.Controls.Add(this.btnDeploy);
             this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
@@ -193,16 +195,6 @@
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "Modules";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // progDeploying
-            // 
-            this.progDeploying.Location = new System.Drawing.Point(102, 129);
-            this.progDeploying.MarqueeAnimationSpeed = 10;
-            this.progDeploying.Name = "progDeploying";
-            this.progDeploying.Size = new System.Drawing.Size(595, 49);
-            this.progDeploying.Step = 50;
-            this.progDeploying.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
-            this.progDeploying.TabIndex = 1;
             // 
             // btnDeploy
             // 
@@ -429,6 +421,22 @@
             this.tabUGSCommands.TabIndex = 2;
             this.tabUGSCommands.Visible = false;
             // 
+            // lblFileName
+            // 
+            this.lblFileName.AutoSize = true;
+            this.lblFileName.Location = new System.Drawing.Point(180, 116);
+            this.lblFileName.Name = "lblFileName";
+            this.lblFileName.Size = new System.Drawing.Size(83, 15);
+            this.lblFileName.TabIndex = 1;
+            this.lblFileName.Text = "Module Name";
+            // 
+            // txtModuleName
+            // 
+            this.txtModuleName.Location = new System.Drawing.Point(180, 134);
+            this.txtModuleName.Name = "txtModuleName";
+            this.txtModuleName.Size = new System.Drawing.Size(420, 23);
+            this.txtModuleName.TabIndex = 2;
+            // 
             // frmUGSCLIUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -449,6 +457,7 @@
             this.statusStripMainForm.ResumeLayout(false);
             this.statusStripMainForm.PerformLayout();
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.tabPageEnvironment.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
@@ -499,6 +508,7 @@
         private Button btnEnvironmentDelete;
         private Button btnUseSelectedEnvironment;
         private Button btnDeploy;
-        private ProgressBar progDeploying;
+        private TextBox txtModuleName;
+        private Label lblFileName;
     }
 }
